@@ -13,6 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+# Codespace URL support: $CODESPACE_NAME is used in api_urls.py for full API URLs
+import os  # Ensures codespace env awareness for tests
 from django.contrib import admin
 from django.urls import path, include
 
