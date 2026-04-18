@@ -16,10 +16,28 @@ Including another URLconf
 
 # Codespace URL support: $CODESPACE_NAME is used in api_urls.py for full API URLs
 import os  # Ensures codespace env awareness for tests
+
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from django.http import JsonResponse
 from django.contrib import admin
 from django.urls import path, include
 
+# Root endpoint for codespace URL awareness
+@api_view(['GET'])
+def root_codespace_url(request, format=None):
+    codespace_name = os.environ.get('CODESPACE_NAME', 'localhost')
+    base_url = f"https://{codespace_name}-8000.app.github.dev" if codespace_name != 'localhost' else "http://localhost:8000"
+    return Response({
+        'users': f'{base_url}/api/users/',
+        'teams': f'{base_url}/api/teams/',
+        'activities': f'{base_url}/api/activities/',
+        'leaderboard': f'{base_url}/api/leaderboard/',
+        'workouts': f'{base_url}/api/workouts/',
+    })
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', root_codespace_url, name='root-codespace-url'),
     path('', include('octofit_tracker.api_urls')),
 ]
